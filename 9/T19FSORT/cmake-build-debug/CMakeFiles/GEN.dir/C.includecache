@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/doktorkrab/code/projects/c/9/T19FSORT/GEN.c
+stdio.h
+-
+stdlib.h
+-
+time.h
+-
+
