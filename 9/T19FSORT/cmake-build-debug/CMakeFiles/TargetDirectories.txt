@@ -1,4 +1,0 @@
-/home/doktorkrab/code/projects/c/9/T19FSORT/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/doktorkrab/code/projects/c/9/T19FSORT/cmake-build-debug/CMakeFiles/GEN.dir
-/home/doktorkrab/code/projects/c/9/T19FSORT/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/doktorkrab/code/projects/c/9/T19FSORT/cmake-build-debug/CMakeFiles/T19FSORT.dir

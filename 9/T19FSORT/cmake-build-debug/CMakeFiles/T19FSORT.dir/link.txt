@@ -1,1 +1,0 @@
-/usr/bin/cc -g   CMakeFiles/T19FSORT.dir/T19FSORT.c.o  -o T19FSORT 
