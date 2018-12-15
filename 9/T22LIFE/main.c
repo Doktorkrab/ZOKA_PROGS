@@ -1,8 +1,8 @@
-#include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <GL/glut.h>
 
 #define FRAME_W 255
 #define FRAME_H 255
