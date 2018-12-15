@@ -1,20 +1,22 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
 
-#define FRAME_W 256
-#define FRAME_H 256
+#define FRAME_W 124 /* Don't work if FRAME_W >= 125 :/ */
+#define FRAME_H 124
 typedef unsigned char byte;
 
 byte Frame[FRAME_H][FRAME_W][3];
-double Zoom = 3;
+double Zoom = 2;
 
 int GetCell( byte *F, int X, int Y );
 int GetNeighbours( byte *F, int X, int Y );
 void FieldInit( byte *F );
 void FieldDraw( byte *F );
-void NewGeneration( byte *F );
-void SetCell( byte *F, int X, int Y, int Value );
+void NewGeneration( byte *F1, byte *F2 );
+void SetCell( byte *F, int X, int Y, byte Value );
 void PutPixel( int X, int Y, byte R, byte G, byte B );
 
 byte *Field1, *Field2;
@@ -23,9 +25,15 @@ const int W = FRAME_W, H = FRAME_H;
 
 void Display( void )
 {
+  byte *F3;
   glClearColor(0.3, 0.5, 0.7, 1);
   glClear(GL_COLOR_BUFFER_BIT);
 
+  FieldDraw(Field1);
+  NewGeneration(Field1, Field2);
+  F3 = Field1;
+  Field1 = Field2;
+  Field2 = F3;
 
   glRasterPos2d(-1, 1);
   glPixelZoom(Zoom, -Zoom);
@@ -48,7 +56,7 @@ void Keyboard( byte Key, int X, int Y )
   {
     X /= Zoom;
     Y /= Zoom;
-    PutPixel(X, Y, 11, 102, 135);
+    PutPixel(X, Y, 255, 255, 255);
   }
   if (Key == 'r')
     FieldInit(Field1);
@@ -56,6 +64,7 @@ void Keyboard( byte Key, int X, int Y )
 
 int main( int argc, char *argv[] )
 {
+  srand(time(0));
   Field1 = malloc(W * H);
   Field2 = malloc(W * H);
   glutInit(&argc, argv);
@@ -68,7 +77,6 @@ int main( int argc, char *argv[] )
 
   glutDisplayFunc(Display);
   glutKeyboardFunc(Keyboard);
-
   FieldInit(Field1);
   glutMainLoop();
   return 0;
@@ -97,10 +105,54 @@ void SetCell( byte *F, int X, int Y, byte Value )
 
 void FieldInit( byte *F )
 {
-  int n = 100;
-
+  int n = 1000;
+  memset(F, 0x00, W * H);
   for (; n >= 0; n--)
     SetCell(F, rand() % W, rand() % H, 1);
 }
 
+void FieldDraw( byte *F )
+{
+  int Y = 0;
+  int X = 0;
+  for (Y = 0; Y < H; Y++)
+    for (X = 0; X < W; X++)
+      PutPixel(X, Y, 0, 0, 0);
 
+  for (Y = 0; Y < H; Y++)
+    for (X = 0; X < W; X++)
+      if (GetCell(F, X, Y))
+        PutPixel(X, Y, 0, 255, 0);
+}
+
+int GetNeighbours( byte *F, int X, int Y )
+{
+  int sum = 0, shiftX, shiftY;
+  for (shiftY = -1; shiftY <= 1; shiftY++)
+    for (shiftX = -1; shiftX <= 1; shiftX++)
+    {
+      if (shiftX == 0 && shiftY == 0)
+        continue;
+      sum += GetCell(F, X + shiftX, Y + shiftY);
+    }
+  return sum;
+}
+
+void NewGeneration( byte *F1, byte *F2 )
+{
+  int n, value, X, Y;
+
+  for (Y = 0; Y < H; Y++)
+    for (X = 0; X < W; X++)
+    {
+      n = GetNeighbours(F1, X, Y);
+      if ((value = GetCell(F1, X, Y)) == 1)
+      {
+        if (n < 2 || n > 3)
+          value = 0;
+      }
+      else if (n == 3)
+        value = 1;
+      SetCell(F2, X, Y, value);
+    }
+}
