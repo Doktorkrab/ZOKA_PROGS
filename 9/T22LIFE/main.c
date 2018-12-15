@@ -4,8 +4,8 @@
 #include <string.h>
 #include <time.h>
 
-#define FRAME_W 124 /* Don't work if FRAME_W >= 125 :/ */
-#define FRAME_H 124
+#define FRAME_W 255
+#define FRAME_H 255
 typedef unsigned char byte;
 
 byte Frame[FRAME_H][FRAME_W][3];
@@ -21,7 +21,7 @@ void PutPixel( int X, int Y, byte R, byte G, byte B );
 
 byte *Field1, *Field2;
 const int W = FRAME_W, H = FRAME_H;
-
+int paused = 0;
 
 void Display( void )
 {
@@ -30,10 +30,13 @@ void Display( void )
   glClear(GL_COLOR_BUFFER_BIT);
 
   FieldDraw(Field1);
-  NewGeneration(Field1, Field2);
-  F3 = Field1;
-  Field1 = Field2;
-  Field2 = F3;
+  if (!paused)
+  {
+    NewGeneration(Field1, Field2);
+    F3 = Field1;
+    Field1 = Field2;
+    Field2 = F3;
+  }
 
   glRasterPos2d(-1, 1);
   glPixelZoom(Zoom, -Zoom);
@@ -56,10 +59,12 @@ void Keyboard( byte Key, int X, int Y )
   {
     X /= Zoom;
     Y /= Zoom;
-    PutPixel(X, Y, 255, 255, 255);
+    SetCell(Field1, X, Y, 1);
   }
   if (Key == 'r')
     FieldInit(Field1);
+  if (Key == 'p')
+    paused ^= 1;
 }
 
 int main( int argc, char *argv[] )
@@ -105,7 +110,7 @@ void SetCell( byte *F, int X, int Y, byte Value )
 
 void FieldInit( byte *F )
 {
-  int n = 1000;
+  int n = 10000;
   memset(F, 0x00, W * H);
   for (; n >= 0; n--)
     SetCell(F, rand() % W, rand() % H, 1);
