@@ -91,15 +91,15 @@ void NewGeneration( byte *F1, byte *F2 ) /* Делаем новое поколе
 
 void Display( void )
 {
-  byte *F3;
+  byte *F3; /* Переменная, через которую будем менять местами поля */
   glClearColor(0.3, 0.5, 0.7, 1);
   glClear(GL_COLOR_BUFFER_BIT);
 
-  FieldDraw(Field1);
-  NewGeneration(Field1, Field2);
+  FieldDraw(Field1); /* Рисуем нынешнее поле */
+  NewGeneration(Field1, Field2); /* Строим новое поле */
   F3 = Field1;
   Field1 = Field2;
-  Field2 = F3;
+  Field2 = F3; /* Меняем поля местами */
 
   glRasterPos2d(-1, 1);
   glPixelZoom(Zoom, -Zoom);
